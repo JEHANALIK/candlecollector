@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Book Details</h1>
+
+<div class="row">
+  <div class="col s12">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">{{ books.name }}</span>
+        <p>Genre: {{ books.type }}</p>
+        <p>Language: {{ books.language }}</p>
+        <p>Description: {{ books.description }}</p>
+      </div>
+      <div class="card-action">
+        <a href="{% url 'books_update' books.id %}">Edit</a>
+        <a href="{% url 'books_delete' books.id %}">Delete</a>
+      </div>
+    </div>
+  </div>
+
+
+  <hr>
+  <div class="row">
+    <div class="col s6">
+        <h3>{{ book.name }}'s Bookmarks</h3>
+  
+        {% if book.bookmark.count %}
+        {% comment %} primaryTable.secondaryTable.all {% endcomment %}
+            {% for bookmark in book.bookmark.all %} 
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        A <span style="color: {{ bookmark.color }}">{{ bookmark.color }}</span>
+                        {{ bookmark.name }}
+                    </span>
+                </div>
+                <div class="card-action">
+                  <form action="{% url 'unassoc_bookmark' books.id bookmark.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn">Remove bookmark</button>
+                  </form>
+                </div>
+            </div>
+        {% endfor %}
+  
+        {% else %}
+        <h5>No bookmarks :(</h5>
+        {% endif %}
+    </div>
+  
+    <div class="col s6">
+        <h3>Available Bookmarks</h3>
+       
+        {% if bookmarks.count %}
+            {% for bookmark in bookmarks.all %}
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        A <span style="color: {{ bookmark.color }}">{{ bookmark.color }}</span>
+                        {{ bookmark.name }}
+                    </span>
+                </div>
+                <div class="card-action">
+                  <form action="{% url 'assoc_bookmark' book.id bookmark.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn">Add Bookmark</button>
+                  </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <h5>{{ book.name }} Already has all the Bookmarks available.</h5>
+        {% endif %}
+    </div>
+  </div>
+
+  {% endblock %}
